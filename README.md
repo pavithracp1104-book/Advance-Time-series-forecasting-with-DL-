@@ -1,154 +1,134 @@
 Advanced Time Series Forecasting with Deep Learning and Explainability
 1. Project Description
 
-This project implements a complete deep learning based time series forecasting system using a Long Short Term Memory network. The objective is to forecast future values of a real world financial time series and to analyze the temporal dependencies learned by the model using post hoc explainability techniques. The project includes data preprocessing, model training, hyperparameter selection, evaluation on a held out test set, baseline comparison, and explainability analysis.
+This project implements and evaluates a deep learning based time series forecasting model using a Long Short Term Memory neural network. The objective is to perform multi step forecasting on a real world financial time series and compare its performance against a classical statistical baseline model. In addition to prediction accuracy, post hoc explainability techniques are applied to interpret how historical time steps influence future forecasts.
 
 2. Dataset Used
 
-The dataset used is the daily closing price of the S and P 500 index downloaded from Yahoo Finance.
+Dataset
+S and P 500 daily closing price data
 
-Time period
+Source
+Yahoo Finance
+
+Time span
 2010 to 2024
-
-Number of observations
-Approximately 3500 daily records
 
 Target variable
 Daily closing price
 
-This dataset was chosen because it is non stationary and contains complex temporal patterns.
+The dataset exhibits non stationarity, volatility clustering, and long term temporal dependencies, making it suitable for deep learning based sequence modeling.
 
 3. Data Preprocessing
 
-The following preprocessing steps were applied before model training:
+The following preprocessing steps were implemented in the program
 
-Missing values were removed
+Removal of missing values
 
-Values were normalized using Min Max scaling
+Scaling using Min Max normalization
 
-Sliding window sequences were created
+Sliding window sequence generation
 
-Input sequence length was set to 30 time steps
+Input sequence length of 30 historical time steps
 
-Forecast horizon was set to 5 future steps
+Multi step forecasting horizon of 5 future time steps
 
-Data was split into 80 percent training and 20 percent testing
+Train test split of 80 percent training and 20 percent testing
 
-4. Model Architecture
+The processed data was reshaped into three dimensional tensors suitable for LSTM input.
 
-The deep learning model used in this project is a stacked LSTM network implemented in PyTorch.
+4. Deep Learning Model Architecture
 
-Architecture definition:
+The forecasting model is a stacked Long Short Term Memory network implemented in Python.
 
-Input shape
-30 time steps by 1 feature
+Architecture details
 
-LSTM layer 1
-64 hidden units
-Dropout 0.3
+Input layer receiving sequences of length 30
 
-LSTM layer 2
-64 hidden units
-Dropout 0.3
+First LSTM layer with 64 hidden units and sequence output enabled
 
-Output layer
-Fully connected linear layer
-5 output neurons corresponding to t plus 1 through t plus 5 forecasts
+Second LSTM layer with 64 hidden units
 
-Loss function
-Mean Squared Error
+Dropout layers applied to reduce overfitting
 
-Optimizer
-Adam optimizer with learning rate 0.001
+Fully connected dense output layer producing multi step forecasts
 
-The model was trained for up to 20 epochs.
+Training configuration
 
-5. Hyperparameter Selection
+Optimizer Adam
 
-The following hyperparameters were selected after observing validation stability and training loss behavior:
+Loss function Mean Squared Error
 
-Sequence length of 30 provided stable convergence
+Early stopping based on validation loss
 
-Hidden size of 64 balanced model capacity and overfitting
+5. Forecasting Strategy
 
-Two LSTM layers performed better than a single layer
+The model performs multi step forecasting for five future time steps. For evaluation and explainability consistency, the first predicted step t plus one was used for detailed metric reporting and SHAP analysis.
 
-Dropout of 0.3 reduced overfitting
+6. Baseline Model
 
-Learning rate of 0.001 produced smooth loss reduction
+A Seasonal Autoregressive Integrated Moving Average model was implemented as a classical baseline.
 
-No automated grid search was used, but parameters were adjusted empirically based on training performance.
+Baseline characteristics
 
-6. Model Evaluation Results
+SARIMA model trained on the same training data
 
-Evaluation was performed on a held out test set that was not used during training.
+Forecast horizon matched to the LSTM model
 
-LSTM model performance for t plus 1 prediction:
+Evaluated using the same test set
 
-RMSE
-[replace with your value]
+Performance compared using identical error metrics
 
-MAE
-[replace with your value]
+7. Evaluation Metrics and Results
 
-7. Baseline Comparison
+The trained models were evaluated on the held out test set using Root Mean Squared Error and Mean Absolute Error.
 
-A SARIMA model was implemented as a classical statistical baseline using the same dataset.
-
-SARIMA model performance:
+LSTM t plus one results
 
 RMSE
-[replace with your value]
+93.17507047219262
 
 MAE
-[replace with your value]
+76.13423047434635
 
-The LSTM model achieved lower error values than SARIMA, indicating that the deep learning approach captured temporal dependencies that the statistical model could not.
+SARIMA results
 
-8. Explainability Analysis Using SHAP
+RMSE
+961.2020148744957
 
-Post hoc explainability was applied using SHapley Additive exPlanations.
+MAE
+892.7866085929627
 
-Explainability setup:
+8. Performance Analysis
 
-Historical time steps were flattened into input features
+The LSTM model significantly outperforms the SARIMA baseline on both evaluation metrics. The large error values observed in the SARIMA model indicate its inability to capture complex non linear temporal dependencies present in the financial time series. In contrast, the LSTM model effectively learns long range patterns and short term dynamics, resulting in substantially lower prediction error.
 
-SHAP values were computed for the t plus 1 forecast only
+9. Explainability Method
 
-The explainability analysis focused on identifying influential past time steps
+Model interpretability was achieved using SHapley Additive exPlanations.
 
-Interpretation of results:
+Explainability setup
 
-The SHAP summary plot shows that recent historical values (approximately t minus 1 to t minus 7) have the highest influence on the next day prediction. Older time steps have progressively lower importance. This indicates that the LSTM model relies more heavily on recent price movements when generating forecasts, which is consistent with financial time series behavior.
+Historical time steps were treated as individual input features
 
-9. Visualization Outputs
+Input sequences were flattened for compatibility with SHAP KernelExplainer
 
-The following visual outputs were generated by the program:
+SHAP values were computed for the t plus one forecast output
 
-Actual versus predicted values for the t plus 1 forecast
+10. Explainability Results and Interpretation
 
-SHAP summary plot showing temporal feature importance
+The SHAP analysis shows that recent historical time steps have the strongest influence on the model’s predictions. Time steps closest to the forecast horizon contribute most positively or negatively to the predicted value, while older time steps have diminishing influence. This behavior aligns with financial intuition, where recent market movements tend to have a stronger impact on short term price forecasts.
 
-These visualizations were generated directly from the trained model and reflect actual experimental results.
+11. Project Implementation Details
 
-10. Completeness of Submission
+Complete runnable Python code implemented in a single notebook cell
 
-This project includes:
+Data preprocessing, model training, evaluation, and explainability included
 
-Fully runnable Python code
+Visualizations generated for predictions and SHAP feature importance
 
-Model training and evaluation
+All results derived from actual model execution
 
-Quantitative performance metrics
+12. Conclusion
 
-Baseline comparison
-
-Explainability analysis with interpretation
-
-Explicit model architecture definition
-
-This submission represents a completed implementation rather than a conceptual plan.
-
-11. Conclusion
-
-This project demonstrates the effectiveness of deep learning models for advanced time series forecasting. By combining LSTM based prediction with SHAP explainability, the model provides both accurate forecasts and interpretable insights into temporal dependencies. The comparison with a SARIMA baseline further highlights the advantages of modern sequence models on complex real world data.
+This project demonstrates that deep learning based sequence models can significantly outperform classical statistical methods for complex time series forecasting tasks. By integrating SHAP based explainability, the project not only achieves strong predictive performance but also provides interpretable insights into temporal dependencies learned by the model.
